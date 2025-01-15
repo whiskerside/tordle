@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { Row, RowState } from "./Row";
 import dictionary from "./dictionary.json";
 import { Clue, clue, describeClue, violation } from "./clue";
@@ -102,8 +102,10 @@ function Game(props: GameProps) {
       ? `Invalid challenge string, playing random game.`
       : `Make your first guess!`
   );
-  const currentSeedParams = () =>
-    `?seed=${seed}&length=${wordLength}&game=${gameNumber}`;
+  const currentSeedParams = useCallback(
+    () => `?seed=${seed}&length=${wordLength}&game=${gameNumber}`,
+    [wordLength, gameNumber]
+  );
   useEffect(() => {
     if (seed) {
       window.history.replaceState(
@@ -112,11 +114,10 @@ function Game(props: GameProps) {
         window.location.pathname + currentSeedParams()
       );
     }
-  }, [wordLength, gameNumber]);
+  }, [currentSeedParams]);
   const tableRef = useRef<HTMLTableElement>(null);
-  const startNextGame = () => {
+  const startNextGame = useCallback(() => {
     if (challenge) {
-      // Clear the URL parameters:
       window.history.replaceState({}, document.title, window.location.pathname);
     }
     setChallenge("");
@@ -128,7 +129,7 @@ function Game(props: GameProps) {
     setCurrentGuess("");
     setGameState(GameState.Playing);
     setGameNumber((x) => x + 1);
-  };
+  }, [challenge, wordLength]);
 
   async function share(copiedHint: string, text?: string) {
     const url = seed
@@ -156,60 +157,73 @@ function Game(props: GameProps) {
     setHint(url);
   }
 
-  const onKey = (key: string) => {
-    if (gameState !== GameState.Playing) {
-      if (key === "Enter") {
-        startNextGame();
-      }
-      return;
-    }
-    if (guesses.length === props.maxGuesses) return;
-    if (/^[a-z]$/i.test(key)) {
-      setCurrentGuess((guess) =>
-        (guess + key.toLowerCase()).slice(0, wordLength)
-      );
-      tableRef.current?.focus();
-      setHint("");
-    } else if (key === "Backspace") {
-      setCurrentGuess((guess) => guess.slice(0, -1));
-      setHint("");
-    } else if (key === "Enter") {
-      if (currentGuess.length !== wordLength) {
-        setHint("Too short");
+  const onKey = useCallback(
+    (key: string) => {
+      if (gameState !== GameState.Playing) {
+        if (key === "Enter") {
+          startNextGame();
+        }
         return;
       }
-      if (!dictionary.includes(currentGuess)) {
-        setHint("Not a valid word");
-        return;
-      }
-      for (const g of guesses) {
-        const c = clue(g, target);
-        const feedback = violation(props.difficulty, c, currentGuess);
-        if (feedback) {
-          setHint(feedback);
+      if (guesses.length === props.maxGuesses) return;
+      if (/^[a-z]$/i.test(key)) {
+        setCurrentGuess((guess) =>
+          (guess + key.toLowerCase()).slice(0, wordLength)
+        );
+        tableRef.current?.focus();
+        setHint("");
+      } else if (key === "Backspace") {
+        setCurrentGuess((guess) => guess.slice(0, -1));
+        setHint("");
+      } else if (key === "Enter") {
+        if (currentGuess.length !== wordLength) {
+          setHint("Too short");
           return;
         }
-      }
-      setGuesses((guesses) => guesses.concat([currentGuess]));
-      setCurrentGuess((guess) => "");
+        if (!dictionary.includes(currentGuess)) {
+          setHint("Not a valid word");
+          return;
+        }
+        for (const g of guesses) {
+          const c = clue(g, target);
+          const feedback = violation(props.difficulty, c, currentGuess);
+          if (feedback) {
+            setHint(feedback);
+            return;
+          }
+        }
+        setGuesses((guesses) => guesses.concat([currentGuess]));
+        setCurrentGuess((guess) => "");
 
-      const gameOver = (verbed: string) =>
-        `You ${verbed}! The answer was ${target.toUpperCase()}. (Enter to ${
-          challenge ? "play a random game" : "play again"
-        })`;
+        const gameOver = (verbed: string) =>
+          `You ${verbed}! The answer was ${target.toUpperCase()}. (Enter to ${
+            challenge ? "play a random game" : "play again"
+          })`;
 
-      if (currentGuess === target) {
-        setHint(gameOver("won"));
-        setGameState(GameState.Won);
-      } else if (guesses.length + 1 === props.maxGuesses) {
-        setHint(gameOver("lost"));
-        setGameState(GameState.Lost);
-      } else {
-        setHint("");
-        speak(describeClue(clue(currentGuess, target)));
+        if (currentGuess === target) {
+          setHint(gameOver("won"));
+          setGameState(GameState.Won);
+        } else if (guesses.length + 1 === props.maxGuesses) {
+          setHint(gameOver("lost"));
+          setGameState(GameState.Lost);
+        } else {
+          setHint("");
+          speak(describeClue(clue(currentGuess, target)));
+        }
       }
-    }
-  };
+    },
+    [
+      gameState,
+      currentGuess,
+      guesses,
+      props.maxGuesses,
+      props.difficulty,
+      target,
+      wordLength,
+      startNextGame,
+      challenge,
+    ]
+  );
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -224,7 +238,7 @@ function Game(props: GameProps) {
     return () => {
       document.removeEventListener("keydown", onKeyDown);
     };
-  }, [currentGuess, gameState]);
+  }, [onKey]);
 
   let letterInfo = new Map<string, Clue>();
   const tableRows = Array(props.maxGuesses)
