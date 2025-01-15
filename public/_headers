@@ -1,6 +1,4 @@
 /*
   X-Frame-Options: ALLOW-FROM https://todayswordle.pages.dev
-                           http://localhost:3000
   Content-Security-Policy: frame-ancestors 'self' https://todayswordle.pages.dev
-                                               http://localhost:3000
 */ 
