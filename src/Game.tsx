@@ -341,7 +341,7 @@ function Game(props: GameProps) {
           ? `${describeSeed(seed)} — length ${wordLength}, game ${gameNumber}`
           : "playing a random game"}
       </div>
-      <p>
+      {/* <p>
         <button
           onClick={() => {
             share("Link copied to clipboard!");
@@ -372,7 +372,7 @@ function Game(props: GameProps) {
             Share emoji results
           </button>
         )}
-      </p>
+      </p> */}
     </div>
   );
 }
