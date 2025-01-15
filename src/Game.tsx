@@ -47,14 +47,14 @@ function randomTarget(wordLength: number): string {
   return candidate;
 }
 
-function getChallengeUrl(target: string): string {
-  return (
-    window.location.origin +
-    window.location.pathname +
-    "?challenge=" +
-    encode(target)
-  );
-}
+// function getChallengeUrl(target: string): string {
+//   return (
+//     window.location.origin +
+//     window.location.pathname +
+//     "?challenge=" +
+//     encode(target)
+//   );
+// }
 
 let initChallenge = "";
 let challengeError = false;
