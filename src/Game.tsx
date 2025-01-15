@@ -8,7 +8,7 @@ import {
   describeSeed,
   dictionarySet,
   Difficulty,
-  gameName,
+  // gameName,
   pick,
   resetRng,
   seed,
@@ -131,31 +131,31 @@ function Game(props: GameProps) {
     setGameNumber((x) => x + 1);
   }, [challenge, wordLength]);
 
-  async function share(copiedHint: string, text?: string) {
-    const url = seed
-      ? window.location.origin + window.location.pathname + currentSeedParams()
-      : getChallengeUrl(target);
-    const body = url + (text ? "\n\n" + text : "");
-    if (
-      /android|iphone|ipad|ipod|webos/i.test(navigator.userAgent) &&
-      !/firefox/i.test(navigator.userAgent)
-    ) {
-      try {
-        await navigator.share({ text: body });
-        return;
-      } catch (e) {
-        console.warn("navigator.share failed:", e);
-      }
-    }
-    try {
-      await navigator.clipboard.writeText(body);
-      setHint(copiedHint);
-      return;
-    } catch (e) {
-      console.warn("navigator.clipboard.writeText failed:", e);
-    }
-    setHint(url);
-  }
+  // async function share(copiedHint: string, text?: string) {
+  //   const url = seed
+  //     ? window.location.origin + window.location.pathname + currentSeedParams()
+  //     : getChallengeUrl(target);
+  //   const body = url + (text ? "\n\n" + text : "");
+  //   if (
+  //     /android|iphone|ipad|ipod|webos/i.test(navigator.userAgent) &&
+  //     !/firefox/i.test(navigator.userAgent)
+  //   ) {
+  //     try {
+  //       await navigator.share({ text: body });
+  //       return;
+  //     } catch (e) {
+  //       console.warn("navigator.share failed:", e);
+  //     }
+  //   }
+  //   try {
+  //     await navigator.clipboard.writeText(body);
+  //     setHint(copiedHint);
+  //     return;
+  //   } catch (e) {
+  //     console.warn("navigator.clipboard.writeText failed:", e);
+  //   }
+  //   setHint(url);
+  // }
 
   const onKey = useCallback(
     (key: string) => {
