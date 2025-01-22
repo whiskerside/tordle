@@ -17,6 +17,7 @@ import {
   getTodaysSeed,
   mulberry32,
   setRandom,
+  getSecretSequence,
 } from "./util";
 import { decode } from "./base64";
 
@@ -49,12 +50,12 @@ function randomTarget(wordLength: number): string {
   } while (/\*/.test(candidate));
 
   // Add logging for today's word
-  if (!urlParam("challenge")) {
-    console.log(
-      `Today's word (${new Date().toLocaleDateString()}):`,
-      candidate
-    );
-  }
+  // if (!urlParam("challenge")) {
+  //   console.log(
+  //     `Today's word (${new Date().toLocaleDateString()}):`,
+  //     candidate
+  //   );
+  // }
 
   return candidate;
 }
@@ -295,6 +296,43 @@ function Game(props: GameProps) {
         />
       );
     });
+
+  const [secretCode, setSecretCode] = useState<string[]>([]);
+  const SECRET_SEQUENCE = getSecretSequence();
+  let lastKeyTime = 0;
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (props.hidden || !e.ctrlKey) return;
+
+      const currentTime = Date.now();
+
+      setSecretCode((prev) => {
+        if (currentTime - lastKeyTime > 1000) {
+          lastKeyTime = currentTime;
+          return [e.code];
+        }
+
+        lastKeyTime = currentTime;
+        const newCode = [...prev, e.code];
+        if (newCode.length > SECRET_SEQUENCE.length) {
+          newCode.shift();
+        }
+        if (newCode.join(",") === SECRET_SEQUENCE.join(",")) {
+          console.log(
+            `%c🎯 ${target.toUpperCase()}`,
+            "color: #4CAF50; font-weight: bold;"
+          );
+          return [];
+        }
+
+        return newCode;
+      });
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [props.hidden, target]);
 
   return (
     <div className="Game" style={{ display: props.hidden ? "none" : "block" }}>

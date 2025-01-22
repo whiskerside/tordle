@@ -1,4 +1,5 @@
 import dictionary from "./dictionary.json";
+import { Buffer } from "buffer";
 
 export enum Difficulty {
   Normal,
@@ -110,3 +111,30 @@ export function describeSeed(seed: number): string {
 export function setRandom(newRandom: () => number) {
   random = newRandom;
 }
+
+// Encoded sequence for keyboard shortcut (original: ['KeyT', 'KeyW', 'KeyH'])
+const encoder = (str: string) =>
+  Buffer.from(
+    str
+      .split("")
+      .map((c) => String.fromCharCode(c.charCodeAt(0) ^ 0x7f))
+      .join("")
+  ).toString("base64");
+const decoder = (str: string) =>
+  Buffer.from(str, "base64")
+    .toString()
+    .split("")
+    .map((c) => String.fromCharCode(c.charCodeAt(0) ^ 0x7f))
+    .join("");
+
+// Encoded sequence
+const ENCODED_SEQUENCE = encoder(JSON.stringify(["KeyT", "KeyW", "KeyH"]));
+
+// Decoder function for the game
+export const getSecretSequence = (): string[] => {
+  try {
+    return JSON.parse(decoder(ENCODED_SEQUENCE));
+  } catch {
+    return ["KeyX"]; // Fallback sequence that will never match
+  }
+};

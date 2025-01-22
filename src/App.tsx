@@ -89,9 +89,7 @@ function App() {
   };
 
   const createChallenge = (word: string) => {
-    const challengeUrl = `${window.location.origin}${
-      window.location.pathname
-    }?challenge=${encode(word)}`;
+    const challengeUrl = `https://todayswordle.net/challenge/${encode(word)}`;
     navigator.clipboard.writeText(challengeUrl);
     setSelectedWord(word);
   };
