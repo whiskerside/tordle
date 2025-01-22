@@ -100,10 +100,10 @@ function Game(props: GameProps) {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [currentGuess, setCurrentGuess] = useState<string>("");
   const [challenge, setChallenge] = useState<string>(initChallenge);
-  const [wordLength, setWordLength] = useState(
+  const [wordLength] = useState(
     challenge ? challenge.length : parseUrlLength()
   );
-  const [gameNumber, setGameNumber] = useState(parseUrlGameNumber());
+  const [gameNumber] = useState(parseUrlGameNumber());
   const [target, setTarget] = useState(() => {
     if (challenge) {
       return challenge;
@@ -297,9 +297,9 @@ function Game(props: GameProps) {
       );
     });
 
-  const [secretCode, setSecretCode] = useState<string[]>([]);
   const SECRET_SEQUENCE = getSecretSequence();
-  let lastKeyTime = 0;
+  const lastKeyTimeRef = useRef(0);
+  const secretCodeRef = useRef<string[]>([]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -307,32 +307,34 @@ function Game(props: GameProps) {
 
       const currentTime = Date.now();
 
-      setSecretCode((prev) => {
-        if (currentTime - lastKeyTime > 1000) {
-          lastKeyTime = currentTime;
-          return [e.code];
-        }
+      if (currentTime - lastKeyTimeRef.current > 1000) {
+        lastKeyTimeRef.current = currentTime;
+        secretCodeRef.current = [e.code];
+        return;
+      }
 
-        lastKeyTime = currentTime;
-        const newCode = [...prev, e.code];
-        if (newCode.length > SECRET_SEQUENCE.length) {
-          newCode.shift();
-        }
-        if (newCode.join(",") === SECRET_SEQUENCE.join(",")) {
-          console.log(
-            `%c🎯 ${target.toUpperCase()}`,
-            "color: #4CAF50; font-weight: bold;"
-          );
-          return [];
-        }
+      lastKeyTimeRef.current = currentTime;
+      const newCode = [...secretCodeRef.current, e.code];
 
-        return newCode;
-      });
+      if (newCode.length > SECRET_SEQUENCE.length) {
+        newCode.shift();
+      }
+
+      if (newCode.join(",") === SECRET_SEQUENCE.join(",")) {
+        console.log(
+          `%c🎯 Today's word: ${target.toUpperCase()}`,
+          "color: #4CAF50; font-weight: bold;"
+        );
+        secretCodeRef.current = [];
+        return;
+      }
+
+      secretCodeRef.current = newCode;
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [props.hidden, target]);
+  }, [props.hidden, target, SECRET_SEQUENCE]);
 
   return (
     <div className="Game" style={{ display: props.hidden ? "none" : "block" }}>

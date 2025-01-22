@@ -1,5 +1,5 @@
 import "./App.css";
-import { maxGuesses, seed, urlParam, dictionarySet, pick } from "./util";
+import { maxGuesses, urlParam, dictionarySet, pick } from "./util";
 import Game from "./Game";
 import { useEffect, useState } from "react";
 import { About } from "./About";
