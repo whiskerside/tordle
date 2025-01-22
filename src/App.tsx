@@ -49,7 +49,6 @@ function App() {
   const [enterLeft, setEnterLeft] = useSetting<boolean>("enter-left", false);
   const [showChallengeModal, setShowChallengeModal] = useState(false);
   const [challengeOptions, setChallengeOptions] = useState<string[]>([]);
-  const [isChallenge, setIsChallenge] = useState(!!urlParam("challenge"));
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
@@ -61,24 +60,6 @@ function App() {
       document.body.style.transition = "0.3s background-color ease-out";
     }, 1);
   }, [dark]);
-
-  useEffect(() => {
-    const handleUrlChange = () => {
-      setIsChallenge(!!urlParam("challenge"));
-    };
-
-    window.addEventListener("popstate", handleUrlChange);
-    window.addEventListener("replacestate", handleUrlChange);
-
-    return () => {
-      window.removeEventListener("popstate", handleUrlChange);
-      window.removeEventListener("replacestate", handleUrlChange);
-    };
-  }, []);
-
-  useEffect(() => {
-    setIsChallenge(!!urlParam("challenge"));
-  }, []);
 
   const link = (emoji: string, label: string, page: Page) => (
     <button
@@ -118,7 +99,7 @@ function App() {
   return (
     <div className="App">
       <div className={`App-container${colorBlind ? " color-blind" : ""}`}>
-        <h1>{isChallenge ? "Challenge Mode" : "Today's Wordle"}</h1>
+        <h1>Today's Wordle</h1>
         <div className="top-right">
           {page !== "game" ? (
             link("❌", "Close", "game")

@@ -323,3 +323,13 @@ a:active {
 .challenge-word-button:hover {
   background: #d0d0d0;
 }
+
+.challenge-mode-indicator {
+  background-color: #f0f0f0;
+  color: #666;
+  padding: 8px;
+  text-align: center;
+  margin: 10px 0;
+  border-radius: 4px;
+  font-style: italic;
+}

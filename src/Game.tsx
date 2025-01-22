@@ -5,7 +5,7 @@ import { Clue, clue, describeClue, violation } from "./clue";
 import { Keyboard } from "./Keyboard";
 import targetList from "./targets.json";
 import {
-  describeSeed,
+  // describeSeed,
   dictionarySet,
   Difficulty,
   // gameName,
@@ -147,8 +147,8 @@ function Game(props: GameProps) {
     setGuesses([]);
     setCurrentGuess("");
     setGameState(GameState.Playing);
-    // Clear any hints
-    setHint("");
+    // Set hint
+    setHint(challenge ? "Make your first guess!" : "");
   }, [challenge, wordLength]);
 
   // async function share(copiedHint: string, text?: string) {
@@ -353,11 +353,7 @@ function Game(props: GameProps) {
       >
         {hint || `\u00a0`}
       </p>
-      <Keyboard
-        layout={props.keyboardLayout}
-        letterInfo={letterInfo}
-        onKey={onKey}
-      />
+      {/* Temporarily hidden: Game mode indicator - will be used for future features
       <div className="Game-seed-info">
         {challenge
           ? "playing a challenge game"
@@ -365,7 +361,10 @@ function Game(props: GameProps) {
           ? `${describeSeed(seed)} — length ${wordLength}, game ${gameNumber}`
           : "playing a random game"}
       </div>
-      {/* <p>
+      */}
+
+      {/* Temporarily hidden: Share functionality - will be implemented in future updates
+      <p>
         <button
           onClick={() => {
             share("Link copied to clipboard!");
@@ -396,7 +395,13 @@ function Game(props: GameProps) {
             Share emoji results
           </button>
         )}
-      </p> */}
+      </p>
+      */}
+      <Keyboard
+        layout={props.keyboardLayout}
+        letterInfo={letterInfo}
+        onKey={onKey}
+      />
     </div>
   );
 }
