@@ -113,9 +113,7 @@ function Game(props: GameProps) {
     return randomTarget(wordLength);
   });
   const [hint, setHint] = useState<string>(
-    challengeError
-      ? `Invalid challenge string, playing random game.`
-      : `Make your first guess!`
+    challengeError ? `Invalid challenge string` : `Make your first guess!`
   );
   const currentSeedParams = useCallback(
     () => `?seed=${seed}&length=${wordLength}&game=${gameNumber}`,
