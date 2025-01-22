@@ -296,12 +296,24 @@ a:active {
 }
 
 .modal-content {
-  background: white;
-  padding: 20px;
+  background-color: white;
+  padding: 16px;
   border-radius: 8px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 16px;
+  min-height: 280px;
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+}
+
+.modal-content h2 {
+  margin: 5px;
+}
+
+.modal-content p {
+  margin: 2px 0px;
 }
 
 .modal-content input {
@@ -315,24 +327,37 @@ a:active {
 }
 
 .challenge-options {
+  flex: 1;
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 8px;
   margin: 16px 0;
+  justify-content: center;
 }
 
 .challenge-word-button {
-  padding: 8px 16px;
-  font-size: 16px;
+  padding: 6px 6px;
+  font-size: 14px;
   text-transform: uppercase;
   cursor: pointer;
-  background: #e0e0e0;
-  border: none;
-  border-radius: 4px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+  min-width: 80px;
+  height: 36px;
 }
 
 .challenge-word-button:hover {
-  background: #d0d0d0;
+  background: #e8e8e8;
+  transform: translateY(-1px);
+}
+
+.challenge-word-button.selected {
+  background: #4caf50;
+  color: white;
+  border-color: #4caf50;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .challenge-mode-indicator {
@@ -344,4 +369,47 @@ a:active {
   border-radius: 4px;
   font-style: italic;
   z-index: 1;
+}
+
+.challenge-info {
+  margin: 16px 0;
+  padding: 12px;
+  background: #f8f8f8;
+  border-radius: 4px;
+  text-align: center;
+  margin-bottom: 0;
+  min-height: 0;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.challenge-info.visible {
+  min-height: 90px;
+  max-height: 200px;
+  opacity: 1;
+  margin: 16px 0;
+}
+
+.challenge-info p {
+  margin: 8px 0;
+}
+
+.challenge-info strong {
+  color: #4caf50;
+}
+
+.modal-close-button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal-close-button:hover {
+  background: #d0d0d0;
 }

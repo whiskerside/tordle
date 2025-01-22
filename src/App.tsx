@@ -49,6 +49,7 @@ function App() {
   const [enterLeft, setEnterLeft] = useSetting<boolean>("enter-left", false);
   const [showChallengeModal, setShowChallengeModal] = useState(false);
   const [challengeOptions, setChallengeOptions] = useState<string[]>([]);
+  const [selectedWord, setSelectedWord] = useState<string>("");
 
   useEffect(() => {
     document.body.className = dark ? "dark" : "";
@@ -72,7 +73,7 @@ function App() {
     </button>
   );
 
-  const CHALLENGE_OPTIONS_COUNT = 5;
+  const CHALLENGE_OPTIONS_COUNT = 3;
 
   const openChallengeModal = () => {
     const options: string[] = [];
@@ -92,8 +93,7 @@ function App() {
       window.location.pathname
     }?challenge=${encode(word)}`;
     navigator.clipboard.writeText(challengeUrl);
-    alert("Challenge link copied to clipboard!");
-    setShowChallengeModal(false);
+    setSelectedWord(word);
   };
 
   return (
@@ -206,20 +206,44 @@ function App() {
           <div className="modal">
             <div className="modal-content">
               <h2>Create Challenge</h2>
-              <p>Select a word to create a challenge:</p>
+              <p>Select a word to create a challenge</p>
               <div className="challenge-options">
                 {challengeOptions.map((word) => (
                   <button
                     key={word}
                     onClick={() => createChallenge(word)}
-                    className="challenge-word-button"
+                    className={`challenge-word-button ${
+                      word === selectedWord ? "selected" : ""
+                    }`}
                   >
                     {word}
                   </button>
                 ))}
               </div>
-              <button onClick={() => setShowChallengeModal(false)}>
-                Cancel
+              <div
+                className={`challenge-info ${selectedWord ? "visible" : ""}`}
+              >
+                {selectedWord && (
+                  <>
+                    <p>
+                      Challenge link created with word{" "}
+                      <strong>{selectedWord.toUpperCase()}</strong>
+                    </p>
+                    <p>
+                      Link copied to clipboard! Share it with your friends and
+                      challenge them to solve this word. 🎮
+                    </p>
+                  </>
+                )}
+              </div>
+              <button
+                className="modal-close-button"
+                onClick={() => {
+                  setShowChallengeModal(false);
+                  setSelectedWord("");
+                }}
+              >
+                Close
               </button>
             </div>
           </div>
