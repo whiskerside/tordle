@@ -100,6 +100,11 @@ function App() {
     <div className="App">
       <div className={`App-container${colorBlind ? " color-blind" : ""}`}>
         <h1>Today's Wordle</h1>
+        <div className="top-left">
+          <button className="emoji-link" onClick={openChallengeModal}>
+            🎯
+          </button>
+        </div>
         <div className="top-right">
           {page !== "game" ? (
             link("❌", "Close", "game")
@@ -107,21 +112,8 @@ function App() {
             <>
               {link("❓", "About", "about")}
               {link("⚙️", "Settings", "settings")}
-              <button onClick={openChallengeModal}>🎯</button>
             </>
           )}
-        </div>
-        <div
-          style={{
-            position: "absolute",
-            left: 5,
-            top: 5,
-            visibility: page === "game" ? "visible" : "hidden",
-          }}
-        >
-          <a href={seed ? "?random" : "?seed=" + todaySeed}>
-            {seed ? "Random" : "Today's"}
-          </a>
         </div>
         {page === "about" && <About />}
         {page === "settings" && (

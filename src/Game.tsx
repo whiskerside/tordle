@@ -353,6 +353,11 @@ function Game(props: GameProps) {
       >
         {hint || `\u00a0`}
       </p>
+      {challenge && (
+        <div className="challenge-mode-indicator">
+          You are playing a challenge game
+        </div>
+      )}
       {/* Temporarily hidden: Game mode indicator - will be used for future features
       <div className="Game-seed-info">
         {challenge
