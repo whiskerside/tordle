@@ -298,6 +298,7 @@ function Game(props: GameProps) {
 
   return (
     <div className="Game" style={{ display: props.hidden ? "none" : "block" }}>
+      {/* Temporarily hide the letters adjustment UI
       <div className="Game-options">
         <label htmlFor="wordLength">Letters:</label>
         <input
@@ -336,6 +337,7 @@ function Game(props: GameProps) {
           Give up
         </button>
       </div>
+      */}
       <table
         className="Game-rows"
         tabIndex={0}
