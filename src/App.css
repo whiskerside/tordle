@@ -300,7 +300,7 @@ a:active {
   padding: 16px;
   border-radius: 8px;
   width: 100%;
-  max-width: 600px;
+  max-width: 400px;
   margin: 0 16px;
   min-height: 280px;
   position: relative;
@@ -401,13 +401,16 @@ a:active {
 }
 
 .modal-close-button {
-  width: 100%;
+  width: 33%;
   padding: 10px;
-  margin-top: 10px;
+  margin-top: 16px;
   background: #e0e0e0;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
 }
 
 .modal-close-button:hover {
