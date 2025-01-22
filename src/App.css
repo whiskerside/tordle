@@ -17,8 +17,8 @@ body {
   margin: 2px;
   border: 2px solid rgba(128, 128, 128, 0.8);
   flex: 1;
-  max-width: 60px;
-  height: 60px;
+  max-width: 48px;
+  height: 48px;
   font-size: 28px;
   display: flex;
   justify-content: center;
@@ -257,8 +257,19 @@ a:active {
   cursor: pointer;
 }
 
-.top-right > * + * {
-  margin-inline-start: 8px;
+.top-right .emoji-link {
+  font-size: 20px;
+  padding: 4px;
+}
+
+.top-left {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+}
+
+.top-left .emoji-link {
+  font-size: 22px;
 }
 
 .App-container.color-blind .letter-correct,
@@ -333,10 +344,4 @@ a:active {
   border-radius: 4px;
   font-style: italic;
   z-index: 1;
-}
-
-.top-left {
-  position: absolute;
-  top: 5px;
-  left: 5px;
 }

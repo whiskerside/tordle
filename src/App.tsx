@@ -102,15 +102,15 @@ function App() {
         <h1>Today's Wordle</h1>
         <div className="top-left">
           <button className="emoji-link" onClick={openChallengeModal}>
-            🎯
+            🎮
           </button>
         </div>
         <div className="top-right">
           {page !== "game" ? (
-            link("❌", "Close", "game")
+            link("✕", "Close", "game")
           ) : (
             <>
-              {link("❓", "About", "about")}
+              {link("ℹ️", "About", "about")}
               {link("⚙️", "Settings", "settings")}
             </>
           )}
