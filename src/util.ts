@@ -11,7 +11,7 @@ export const maxGuesses = 6;
 
 export const dictionarySet: Set<string> = new Set(dictionary);
 
-function mulberry32(a: number) {
+export function mulberry32(a: number) {
   return function () {
     var t = (a += 0x6d2b79f5);
     t = Math.imul(t ^ (t >>> 15), t | 1);
@@ -25,8 +25,26 @@ export function urlParam(name: string): string | null {
 }
 
 export const seed = Number(urlParam("seed"));
-const makeRandom = () => (seed ? mulberry32(seed) : () => Math.random());
-let random = makeRandom();
+
+// Add this function to get today's seed consistently
+export function getTodaysSeed(): number {
+  const now = new Date();
+  const dateStr =
+    now.getUTCFullYear().toString() +
+    (now.getUTCMonth() + 1).toString().padStart(2, "0") +
+    now.getUTCDate().toString().padStart(2, "0");
+  return Number(dateStr);
+}
+
+// Modify makeRandom to always use today's seed unless in challenge mode
+export const makeRandom = () => {
+  if (urlParam("challenge")) {
+    return () => Math.random();
+  }
+  return mulberry32(getTodaysSeed());
+};
+
+export let random = makeRandom();
 
 export function resetRng(): void {
   random = makeRandom();
@@ -87,4 +105,8 @@ export function describeSeed(seed: number): string {
   } else {
     return "seed " + seed;
   }
+}
+
+export function setRandom(newRandom: () => number) {
+  random = newRandom;
 }

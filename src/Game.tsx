@@ -14,6 +14,9 @@ import {
   seed,
   speak,
   urlParam,
+  getTodaysSeed,
+  mulberry32,
+  setRandom,
 } from "./util";
 import { decode } from "./base64";
 
@@ -44,6 +47,15 @@ function randomTarget(wordLength: number): string {
   do {
     candidate = pick(eligible);
   } while (/\*/.test(candidate));
+
+  // Add logging for today's word
+  if (!urlParam("challenge")) {
+    console.log(
+      `Today's word (${new Date().toLocaleDateString()}):`,
+      candidate
+    );
+  }
+
   return candidate;
 }
 
@@ -92,10 +104,12 @@ function Game(props: GameProps) {
   );
   const [gameNumber, setGameNumber] = useState(parseUrlGameNumber());
   const [target, setTarget] = useState(() => {
+    if (challenge) {
+      return challenge;
+    }
     resetRng();
-    // Skip RNG ahead to the parsed initial game number:
-    for (let i = 1; i < gameNumber; i++) randomTarget(wordLength);
-    return challenge || randomTarget(wordLength);
+    setRandom(mulberry32(getTodaysSeed()));
+    return randomTarget(wordLength);
   });
   const [hint, setHint] = useState<string>(
     challengeError
@@ -118,17 +132,23 @@ function Game(props: GameProps) {
   const tableRef = useRef<HTMLTableElement>(null);
   const startNextGame = useCallback(() => {
     if (challenge) {
+      // First clear the URL and challenge state
       window.history.replaceState({}, document.title, window.location.pathname);
+      // Dispatch custom event for URL change
+      window.dispatchEvent(new Event("replacestate"));
+      setChallenge("");
+      // Then reset RNG to today's seed
+      resetRng();
+      setRandom(mulberry32(getTodaysSeed()));
+      // Finally set the new target
+      setTarget(randomTarget(wordLength));
     }
-    setChallenge("");
-    const newWordLength = limitLength(wordLength);
-    setWordLength(newWordLength);
-    setTarget(randomTarget(newWordLength));
-    setHint("");
+    // Reset game state
     setGuesses([]);
     setCurrentGuess("");
     setGameState(GameState.Playing);
-    setGameNumber((x) => x + 1);
+    // Clear any hints
+    setHint("");
   }, [challenge, wordLength]);
 
   // async function share(copiedHint: string, text?: string) {
@@ -159,6 +179,10 @@ function Game(props: GameProps) {
 
   const onKey = useCallback(
     (key: string) => {
+      if (document.querySelector(".modal")) {
+        return; // Don't handle keyboard input when modal is open
+      }
+
       if (gameState !== GameState.Playing) {
         if (key === "Enter") {
           startNextGame();
@@ -197,7 +221,7 @@ function Game(props: GameProps) {
 
         const gameOver = (verbed: string) =>
           `You ${verbed}! The answer was ${target.toUpperCase()}. (Enter to ${
-            challenge ? "play a random game" : "play again"
+            challenge ? "play today's wordle" : "play again"
           })`;
 
         if (currentGuess === target) {
