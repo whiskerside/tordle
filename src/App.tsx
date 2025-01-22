@@ -91,6 +91,14 @@ function App() {
   const createChallenge = (word: string) => {
     const challengeUrl = `https://todayswordle.net/challenge/${encode(word)}`;
     navigator.clipboard.writeText(challengeUrl);
+    window.parent.postMessage(
+      {
+        type: "CHALLENGE_LINK",
+        link: challengeUrl,
+      },
+      "https://todayswordle.net"
+    );
+
     setSelectedWord(word);
   };
 
